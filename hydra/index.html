@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <title></title>
+    <link rel="stylesheet" href="dist/reveal.css" />
+    <link rel="stylesheet" href="dist/theme/night.css" id="theme" />
+    <link rel="stylesheet" href="plugin/highlight/zenburn.css" />
+	<link rel="stylesheet" href="css/layout.css" />
+	<link rel="stylesheet" href="plugin/customcontrols/style.css">
+	<link rel="stylesheet" href="plugin/chalkboard/style.css">
+
+	<link rel="stylesheet" href="plugin/reveal-pointer/pointer.css" />
+
+
+    <script defer src="dist/fontawesome/all.min.js"></script>
+
+	<script type="text/javascript">
+		var forgetPop = true;
+		function onPopState(event) {
+			if(forgetPop){
+				forgetPop = false;
+			} else {
+				parent.postMessage(event.target.location.href, "app://obsidian.md");
+			}
+        }
+		window.onpopstate = onPopState;
+		window.onmessage = event => {
+			if(event.data == "reload"){
+				window.document.location.reload();
+			}
+			forgetPop = true;
+		}
+
+		function fitElements(){
+			const itemsToFit = document.getElementsByClassName('fitText');
+			for (const item in itemsToFit) {
+				if (Object.hasOwnProperty.call(itemsToFit, item)) {
+					var element = itemsToFit[item];
+					fitElement(element,1, 1000);
+					element.classList.remove('fitText');
+				}
+			}
+		}
+
+		function fitElement(element, start, end){
+
+			let size = (end + start) / 2;
+			element.style.fontSize = `${size}px`;
+
+			if(Math.abs(start - end) < 1){
+				while(element.scrollHeight > element.offsetHeight){
+					size--;
+					element.style.fontSize = `${size}px`;
+				}
+				return;
+			}
+
+			if(element.scrollHeight > element.offsetHeight){
+				fitElement(element, start, size);
+			} else {
+				fitElement(element, size, end);
+			}		
+		}
+
+
+		document.onreadystatechange = () => {
+			fitElements();
+			if (document.readyState === 'complete') {
+				if (window.location.href.indexOf("?export") != -1){
+					parent.postMessage(event.target.location.href, "app://obsidian.md");
+				}
+				if (window.location.href.indexOf("print-pdf") != -1){
+					let stateCheck = setInterval(() => {
+						clearInterval(stateCheck);
+						window.print();
+					}, 250);
+				}
+			}
+	};
+
+
+        </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides"><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Slaying the Hydra
+</div></script></section><section ><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## Hydra Biology
+&nbsp;
+
+<img src="Pasted image 20250212225412.png" alt="" style="object-fit: scale-down">
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### A Simple Hydra
+&nbsp;
+
+<div class="mermaid">
+graph BT
+	classDef body fill:#0f0
+	classDef neck fill:#fff
+	classDef leaf fill:#f00
+	body(( ))
+	head1(( ))
+	neck2(( ))
+	head21(( ))
+	neck3(( ))
+	head31(( ))
+	neck32(( ))
+	head321(( ))
+	head322(( ))
+	head323(( ))
+	head33(( ))
+	body --- head1
+	body --- neck2
+	body --- neck3
+	neck2 --- head21
+	neck3 --- head31
+	neck3 --- neck32
+	neck32 --- head321
+	neck32 --- head322
+	neck32 --- head323
+	neck3 --- head33
+	class head1,head21,head31,head321,head322,head323,head33 leaf
+	class neck2,neck3,neck32 neck
+	class body body
+
+</div>
+
+&nbsp;
+- &shy;<!-- .element: class="fragment" data-fragment-index="1" -->A hydra is a finite tree
+- &shy;<!-- .element: class="fragment" data-fragment-index="2" -->Hydras and trees grow upward like Zeus intended
+- &shy;<!-- .element: class="fragment" data-fragment-index="3" -->The <span style="color:#0f0">root node</span> of the tree is the hydra's body
+- &shy;<!-- .element: class="fragment" data-fragment-index="4" -->The edges of the tree are the hydra's necks
+- &shy;<!-- .element: class="fragment" data-fragment-index="5" -->Necks can fork at internal nodes
+- &shy;<!-- .element: class="fragment" data-fragment-index="6" -->The <span style="color:#f00">leaf nodes</span> of the tree are the hydra's heads
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Fighting the Hydra
+- &shy;<!-- .element: class="fragment" data-fragment-index="1" -->Hercules cuts off heads/leaves one at a time
+- &shy;<!-- .element: class="fragment" data-fragment-index="2" -->When a leaf node is cut, there are two cases
+- &shy;<!-- .element: class="fragment" data-fragment-index="3" -->Case 1: The leaf's parent is the root
+	- &shy;<!-- .element: class="fragment" data-fragment-index="4" -->The head just falls off and the neck withers and dies
+- &shy;<!-- .element: class="fragment" data-fragment-index="5" -->Case 2: The leaf's parent is not the root
+	- &shy;<!-- .element: class="fragment" data-fragment-index="6" -->The leaf's grandparent grows two new heads/leaves
+		- &shy;<!-- .element: class="fragment" data-fragment-index="7" -->(If order ever matters, these new heads are appended to the right)
+	- &shy;<!-- .element: class="fragment" data-fragment-index="8" -->Additionally, the leaf's parent may now itself be a leaf
+		- &shy;<!-- .element: class="fragment" data-fragment-index="9" -->Congratulations, that neck stump is now a head!
+- &shy;<!-- .element: class="fragment" data-fragment-index="10" -->The hydra dies when it has no heads left
+	- &shy;<!-- .element: class="fragment" data-fragment-index="11" -->i.e. when the tree is just the root node
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### An example fight
+&nbsp;
+
+<div class="mermaid">
+graph BT
+	classDef body fill:#0f0
+	classDef neck fill:#fff
+	classDef leaf fill:#f00
+	body(( ))
+	head1(( ))
+	neck2(( ))
+	head21(( ))
+	neck3(( ))
+	head31(( ))
+	neck32(( ))
+	head321(( ))
+	head322(( ))
+	head323(( ))
+	head33(( ))
+	body --- head1
+	body --- neck2
+	body --- neck3
+	neck2 --- head21
+	neck3 --- head31
+	neck3 --- neck32
+	neck32 --- head321
+	neck32 --- head322
+	neck32 --- head323
+	neck3 --- head33
+	class head1,head21,head31,head321,head322,head323,head33 leaf
+	class neck2,neck3,neck32 neck
+	class body body
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### An example fight
+&nbsp;
+
+<div class="mermaid">
+graph BT
+	classDef body fill:#0f0
+	classDef neck fill:#fff
+	classDef leaf fill:#f00
+	body(( ))
+	subgraph cut[ ]
+	head1(( ))
+	end
+	neck2(( ))
+	head21(( ))
+	neck3(( ))
+	head31(( ))
+	neck32(( ))
+	head321(( ))
+	head322(( ))
+	head323(( ))
+	head33(( ))
+	body -.- head1
+	body --- neck2
+	body --- neck3
+	neck2 --- head21
+	neck3 --- head31
+	neck3 --- neck32
+	neck32 --- head321
+	neck32 --- head322
+	neck32 --- head323
+	neck3 --- head33
+	class head1,head21,head31,head321,head322,head323,head33 leaf
+	class neck2,neck3,neck32 neck
+	class body body
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### An example fight
+&nbsp;
+
+<div class="mermaid">
+graph BT
+	classDef body fill:#0f0
+	classDef neck fill:#fff
+	classDef leaf fill:#f00
+	body(( ))
+	neck2(( ))
+	head21(( ))
+	neck3(( ))
+	head31(( ))
+	neck32(( ))
+	head321(( ))
+	head322(( ))
+	head323(( ))
+	head33(( ))
+	body --- neck2
+	body --- neck3
+	neck2 --- head21
+	neck3 --- head31
+	neck3 --- neck32
+	neck32 --- head321
+	neck32 --- head322
+	neck32 --- head323
+	neck3 --- head33
+	class head21,head31,head321,head322,head323,head33 leaf
+	class neck2,neck3,neck32 neck
+	class body body
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### An example fight
+&nbsp;
+
+<div class="mermaid">
+graph BT
+	classDef body fill:#0f0
+	classDef neck fill:#fff
+	classDef leaf fill:#f00
+	body(( ))
+	neck2(( ))
+	head21(( ))
+	neck3(( ))
+	head31(( ))
+	neck32(( ))
+	subgraph cut[ ]
+	head321(( ))
+	end
+	head322(( ))
+	head323(( ))
+	head33(( ))
+	body --- neck2
+	body --- neck3
+	neck2 --- head21
+	neck3 --- head31
+	neck3 --- neck32
+	neck32 -.- head321
+	neck32 --- head322
+	neck32 --- head323
+	neck3 --- head33
+	class head21,head31,head321,head322,head323,head33 leaf
+	class neck2,neck3,neck32 neck
+	class body body
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### An example fight
+&nbsp;
+
+<div class="mermaid">
+graph BT
+	classDef body fill:#0f0
+	classDef neck fill:#fff
+	classDef leaf fill:#f00
+	body(( ))
+	neck2(( ))
+	head21(( ))
+	neck3(( ))
+	head31(( ))
+	neck32(( ))
+	head321(( ))
+	head322(( ))
+	head33(( ))
+	head34(( ))
+	head35(( ))
+	body --- neck2
+	body --- neck3
+	neck2 --- head21
+	neck3 --- head31
+	neck3 --- neck32
+	neck32 --- head321
+	neck32 --- head322
+	neck3 --- head33
+	neck3 --- head34
+	neck3 --- head35
+	class head21,head31,head321,head322,head33,head34,head35 leaf
+	class neck2,neck3,neck32 neck
+	class body body
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### An example fight
+&nbsp;
+
+<div class="mermaid">
+graph BT
+	classDef body fill:#0f0
+	classDef neck fill:#fff
+	classDef leaf fill:#f00
+	body(( ))
+	neck2(( ))
+	subgraph cut[ ]
+	head21(( ))
+	end
+	neck3(( ))
+	head31(( ))
+	neck32(( ))
+	head321(( ))
+	head322(( ))
+	head33(( ))
+	head34(( ))
+	head35(( ))
+	body --- neck2
+	body --- neck3
+	neck2 -.- head21
+	neck3 --- head31
+	neck3 --- neck32
+	neck32 --- head321
+	neck32 --- head322
+	neck3 --- head33
+	neck3 --- head34
+	neck3 --- head35
+	class head21,head31,head321,head322,head33,head34,head35 leaf
+	class neck2,neck3,neck32 neck
+	class body body
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### An example fight
+&nbsp;
+
+<div class="mermaid">
+graph BT
+	classDef body fill:#0f0
+	classDef neck fill:#fff
+	classDef leaf fill:#f00
+	body(( ))
+	head2(( ))
+	neck3(( ))
+	head31(( ))
+	neck32(( ))
+	head321(( ))
+	head322(( ))
+	head33(( ))
+	head34(( ))
+	head35(( ))
+	head4(( ))
+	head5(( ))
+	body --- head2
+	body --- neck3
+	neck3 --- head31
+	neck3 --- neck32
+	neck32 --- head321
+	neck32 --- head322
+	neck3 --- head33
+	neck3 --- head34
+	neck3 --- head35
+	body --- head4
+	body --- head5
+	class head2,head31,head321,head322,head33,head34,head35,head4,head5 leaf
+	class neck2,neck3,neck32 neck
+	class body body
+
+</div>
+</div></script></section></section><section ><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## Can Hercules Win&#8203;?
+
+<img src="Pasted image 20250212225816.png" alt="" style="object-fit: scale-down">
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Hercules *cannot lose*
+- &shy;<!-- .element: class="fragment" data-fragment-index="1" -->Let `$h$` be the hydra's height - the maximum distance from the body to any head
+- &shy;<!-- .element: class="fragment" data-fragment-index="2" -->Let `$w$` be the number of heads at distance `$h$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="3" -->If `$h = 1$`, the hydra cannot grow more heads, and Hercules wins after `$w$` cuts
+- &shy;<!-- .element: class="fragment" data-fragment-index="4" -->Otherwise, Hercules wins by induction!
+- &shy;<!-- .element: class="fragment" data-fragment-index="5" -->Cutting a head at a distance `$< h$` does not change `$w$`
+	- &shy;<!-- .element: class="fragment" data-fragment-index="6" -->By induction, all such cuts are winning
+- &shy;<!-- .element: class="fragment" data-fragment-index="7" -->Cutting a head at distance `$h$` only produces new heads at distance `$h - 1$`
+	- &shy;<!-- .element: class="fragment" data-fragment-index="8" -->After `$w$` such cuts, the hydra has height `$h - 1$`, and Hercules inductively wins
+- &shy;<!-- .element: class="fragment" data-fragment-index="9" -->This works no matter the order of cuts
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Stronger Hydras
+- &shy;<!-- .element: class="fragment" data-fragment-index="1" -->What if the hydra grows 3 heads instead of 2?
+- &shy;<!-- .element: class="fragment" data-fragment-index="2" -->What about 4 heads, 5 heads, ...?
+- &shy;<!-- .element: class="fragment" data-fragment-index="3" -->What if the hydra ramps up in power?
+	- &shy;<!-- .element: class="fragment" data-fragment-index="4" -->`$n$` new heads on turn `$n$`?
+	- &shy;<!-- .element: class="fragment" data-fragment-index="5" -->`$2^n$` new heads on turn `$n$`?
+	- &shy;<!-- .element: class="fragment" data-fragment-index="6" -->*Any* natural number of heads on turn `$n$`?
+- &shy;<!-- .element: class="fragment" data-fragment-index="7" --> Yeah, Hercules still wins
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+#### Hercules wins *really fucking slowly*
+- &shy;<!-- .element: class="fragment" data-fragment-index="1" -->Suppose the hydra originally starts with a single head at height `$h$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="2" -->Suppose the hydra grows `$n$` heads on turn `$n$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="3" -->Suppose Hercules always cuts the newest head
+- &shy;<!-- .element: class="fragment" data-fragment-index="4" -->If `$h = 1$`, it takes 1 cut
+- &shy;<!-- .element: class="fragment" data-fragment-index="5" -->If `$h = 2$`, it takes 3 cuts
+- &shy;<!-- .element: class="fragment" data-fragment-index="6" -->If `$h = 3$`, it takes 11 cuts
+- &shy;<!-- .element: class="fragment" data-fragment-index="7" -->If `$h = 4$`, it takes 1114111 cuts
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+#### Hercules wins *really fucking slowly*
+- &shy;<!-- .element: class="fragment" data-fragment-index="1" -->If `$h = 5$`, let `$f(x) = 2^x(x + 2) - 1$` and let `$f^n$` denote `$n$` iterations of `$f$`
+	- &shy;<!-- .element: class="fragment" data-fragment-index="2" -->It takes `$2f^{f^2(3) + 1}(f^2(3) + 1) + 1$` cuts
+	- &shy;<!-- .element: class="fragment" data-fragment-index="3" -->That's `$2f^{22539988369408}(22539988369408) + 1$` cuts
+- &shy;<!-- .element: class="fragment" data-fragment-index="4" -->In general:
+	- &shy;<!-- .element: class="fragment" data-fragment-index="5" -->Let `$f_1(x) = 2x + 1$`
+	- &shy;<!-- .element: class="fragment" data-fragment-index="6" -->Let `$f_{i+1}(x) = f_i^x(x+1)$`
+	- &shy;<!-- .element: class="fragment" data-fragment-index="7" -->It takes `$f_1(f_2(f_3(\ldots f_{h-1}(f_h(1))\ldots)))$` cuts
+</div></script></section></section><section ><section data-markdown><script type="text/template"><!-- .slide: class="drop" data-background-size=contain="true"="true" data-background-image="https://pm1.aminoapps.com/6904/5223e2b13cb67de1daf89674ce36dedefb168e8fr1-2048-2048v2_uhq.jpg" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## <span style="text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000">The Kirby-Paris Hydra</span>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### The Kirby-Paris Hydra
+- &shy;<!-- .element: class="fragment" data-fragment-index="1" -->When a head is cut off a normal hydra, its grandparent node (if it exists) grows new heads
+- &shy;<!-- .element: class="fragment" data-fragment-index="2" -->When a head is cut off a K-P hydra, its grandparent node (if it exists) grows new *subtrees*
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Example
+
+<div class="mermaid">
+graph BT
+	classDef body fill:#0f0
+	classDef neck fill:#fff
+	classDef leaf fill:#f00
+	body(( ))
+	head1(( ))
+	neck2(( ))
+	head21(( ))
+	neck3(( ))
+	head31(( ))
+	neck32(( ))
+	head321(( ))
+	head322(( ))
+	head323(( ))
+	head33(( ))
+	body --- head1
+	body --- neck2
+	body --- neck3
+	neck2 --- head21
+	neck3 --- head31
+	neck3 --- neck32
+	neck32 --- head321
+	neck32 --- head322
+	neck32 --- head323
+	neck3 --- head33
+	class head1,head21,head31,head321,head322,head323,head33 leaf
+	class neck2,neck3,neck32 neck
+	class body body
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Example
+
+<div class="mermaid">
+graph BT
+	classDef body fill:#0f0
+	classDef neck fill:#fff
+	classDef leaf fill:#f00
+	body(( ))
+	head1(( ))
+	neck2(( ))
+	head21(( ))
+	neck3(( ))
+	head31(( ))
+	neck32(( ))
+	subgraph cut[ ]
+	head321(( ))
+	end
+	head322(( ))
+	head323(( ))
+	head33(( ))
+	body --- head1
+	body --- neck2
+	body --- neck3
+	neck2 --- head21
+	neck3 --- head31
+	neck3 --- neck32
+	neck32 -.- head321
+	neck32 --- head322
+	neck32 --- head323
+	neck3 --- head33
+	class head1,head21,head31,head321,head322,head323,head33 leaf
+	class neck2,neck3,neck32 neck
+	class body body
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Example
+
+<div class="mermaid">
+graph BT
+	classDef body fill:#0f0
+	classDef neck fill:#fff
+	classDef leaf fill:#f00
+	body(( ))
+	head1(( ))
+	neck2(( ))
+	head21(( ))
+	neck3(( ))
+	head31(( ))
+	subgraph grow[ ]
+	neck32(( ))
+	head322(( ))
+	head323(( ))
+	end
+	head33(( ))
+	body --- head1
+	body --- neck2
+	body --- neck3
+	neck2 --- head21
+	neck3 --- head31
+	neck3 --- neck32
+	neck32 --- head322
+	neck32 --- head323
+	neck3 --- head33
+	class head1,head21,head31,head322,head323,head33 leaf
+	class neck2,neck3,neck32 neck
+	class body body
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Example
+
+<div class="mermaid">
+graph BT
+	classDef body fill:#0f0
+	classDef neck fill:#fff
+	classDef leaf fill:#f00
+	body(( ))
+	head1(( ))
+	neck2(( ))
+	head21(( ))
+	neck3(( ))
+	head31(( ))
+	neck32(( ))
+	head322(( ))
+	head323(( ))
+	head33(( ))
+	neck34(( ))
+	head342(( ))
+	head343(( ))
+	neck35(( ))
+	head352(( ))
+	head353(( ))
+	body --- head1
+	body --- neck2
+	body --- neck3
+	neck2 --- head21
+	neck3 --- head31
+	neck3 --- neck32
+	neck32 --- head322
+	neck32 --- head323
+	neck3 --- head33
+	neck3 --- neck34
+	neck34 --- head342
+	neck34 --- head343
+	neck3 --- neck35
+	neck35 --- head352
+	neck35 --- head353
+	class head1,head21,head31,head322,head323,head33,head342,head343,head352,head353 leaf
+	class neck2,neck3,neck32,neck34,neck35 neck
+	class body body
+
+</div>
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Kirby-Paris Growth
+- &shy;<!-- .element: class="fragment" data-fragment-index="1" -->Same assumptions as before
+	- &shy;<!-- .element: class="fragment" data-fragment-index="2" -->Initial state is a single head at distance `$h$`
+	- &shy;<!-- .element: class="fragment" data-fragment-index="3" -->Hydra grows `$n$` subtrees on turn `$n$`
+	- &shy;<!-- .element: class="fragment" data-fragment-index="4" -->Hercules always cuts the newest head
+- &shy;<!-- .element: class="fragment" data-fragment-index="5" -->`$h = 1$`: 1 cut
+- &shy;<!-- .element: class="fragment" data-fragment-index="6" -->`$h = 2$`: 3 cuts
+- &shy;<!-- .element: class="fragment" data-fragment-index="7" -->`$h = 3$`: 37 cuts
+	- &shy;<!-- .element: class="fragment" data-fragment-index="8" -->Regular hydra is 11 cuts
+- &shy;<!-- .element: class="fragment" data-fragment-index="9" -->`$h = 4$`: *significantly* greater than Graham's number
+	- &shy;<!-- .element: class="fragment" data-fragment-index="10" -->Regular hydra is "only" 1114111 cuts
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Aside: Graham's Number
+- &shy;<!-- .element: class="fragment" data-fragment-index="1" -->Look this up - it's an *unimaginably* huge number
+- &shy;<!-- .element: class="fragment" data-fragment-index="2" -->It's a power of 3 and you can compute individual digits easily, but you can't write it down
+- &shy;<!-- .element: class="fragment" data-fragment-index="3" -->Write down how many digits it has
+- &shy;<!-- .element: class="fragment" data-fragment-index="4" -->Write down how many digits *that* number has
+- &shy;<!-- .element: class="fragment" data-fragment-index="5" -->Repeat this as many times as there are Planck volumes in the observable universe
+- &shy;<!-- .element: class="fragment" data-fragment-index="6" -->Even if you could write one digit in each Planck volume, you still couldn't write this down
+</div></script></section></section><section ><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## Can Hercules Win?
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Hercules (still) *cannot lose*!
+...but you can't prove it <!-- .element: class="fragment" -->
+
+...at least, not using only Peano Arithmetic <!-- .element: class="fragment" -->
+</div></script></section></section><section ><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## Goodstein Sequences
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+Hereditary base-`$n$` notation
+- &shy;<!-- .element: class="fragment" data-fragment-index="1" -->`$35$` in base-`$2$` is `$100011$`, i.e. `$2^{5} + 2 + 1$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="2" -->But the exponents aren't in base-`$2$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="3" -->`$35 = 2^{5} + 2 + 1 = 2^{2^2+1} + 2 + 1$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="4" -->This is hereditary base-`$2$` notation
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Goodstein Sequences
+- &shy;<!-- .element: class="fragment" data-fragment-index="1" -->Pick a natural number `$m$`, and define the Goodstein sequence `$G_m$`:
+- &shy;<!-- .element: class="fragment" data-fragment-index="2" -->The first term is `$m$` itself
+- &shy;<!-- .element: class="fragment" data-fragment-index="3" -->To get the second term, write `$m$` in hereditary base-`$2$` notation, change every `$2$` into a `$3$`, then subtract `$1$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="4" -->To get the third term, write the second term in hereditary base-`$3$`, change every `$3$` into a `$4$`, then subtract `$1$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="5" -->In general, to get the nth term, write the previous term in hereditary base-n, change every n to n + 1, then subtract 1
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Example: `$G_3$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="1" -->`$G_3(1) = 3$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="2" -->`$3 = 2 + 1 \implies G_3(2) = 3 + 1 - 1 = 3$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="3" -->`$G_3(3) = 4 - 1 = 3$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="4" -->`$G_3(4) = 3 - 1 = 2$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="5" -->`$G_3(5) = 2 - 1 = 1$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="6" -->`$G_3(6) = 1 - 1 = 0$`
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Example: `$G_4$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="1" -->`$G_4(1) = 4$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="2" -->`$4 = 2^{2} \implies G_4(2) = 3^{3} - 1 = 26$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="3" -->`$26 = 2\cdot3^{2} + 2\cdot3 + 2$`
+`$\implies G_4(3) = 2\cdot4^{2} + 2\cdot4^{1} + 2 - 1 = 41$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="4" -->The sequence continues 60, 83, 109, ...
+</div></script></section></section><section ><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## Does every Goodstein sequence terminate?
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Goodstein's Theorem: yes!
+- &shy;<!-- .element: class="fragment" data-fragment-index="1" -->Reminder: to compute `$G_m(n)$`, we take `$G_m(n - 1)$`, write it in hereditary base-`$n$`, turn every `$n$` into `$n + 1$`, then subtract `$1$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="2" -->Define a sequence `$H_m(n)$` of *ordinals*
+- &shy;<!-- .element: class="fragment" data-fragment-index="3" -->To compute `$H_m(n-1)$`, take `$G_m(n-1)$`, write it in hereditary base-`$n$`, then turn every `$n$` into `$\omega$`
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Example
+
+| `$n$` | `$G_4(n)$`                       | `$H_4(n)$`                            |
+| --- | ------------------------------ | ----------------------------------- |
+| `$1$` | `$4 = 2^2$`                      | `$\omega^{\omega}$`                   |
+| `$2$` | `$26 = 2\cdot3^2+2\cdot3+2$`     | `$\omega^2\cdot2 + \omega\cdot2 + 2$` |
+| `$3$` | `$41 = 2\cdot4+ 2\cdot4 + 1$` | `$\omega^2\cdot2 + \omega \cdot2+1$`  |
+| `$4$` | `$60 = 2\cdot5+ 2\cdot5$`     | `$\omega^2\cdot2 + \omega\cdot2$`     |
+| 5   | `$83 = 2\cdot6+ 6 + 5$`       | `$\omega^2\cdot2 + \omega + 5$`       |
+| 6   | `$109 = 2\cdot7+ 7 + 4$`      | `$\omega^2\cdot2 + \omega + 4$`       |
+</div></script></section><section data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Back to Goodstein's Theorem
+- &shy;<!-- .element: class="fragment" data-fragment-index="1" -->`$H_m$` is a sequence of upper bounds for `$G_m$`, and `$H_m$` is strictly decreasing
+- &shy;<!-- .element: class="fragment" data-fragment-index="2" -->Therefore, `$H_m$` will reach 0
+- &shy;<!-- .element: class="fragment" data-fragment-index="3" -->Therefore, `$G_m$` will reach 0
+</div></script></section></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## Slaying the K-P Hydra
+- &shy;<!-- .element: class="fragment" data-fragment-index="1" -->Compute a label for each node
+- &shy;<!-- .element: class="fragment" data-fragment-index="2" -->Heads are all labeled `$0$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="3" -->If a node isn't a head, it has some number of children (call it `$k$`)
+- &shy;<!-- .element: class="fragment" data-fragment-index="4" -->Recursively label each child, and sort these labels in descending order `$\alpha_1 \ge \alpha_2 \ge \ldots \ge \alpha_k$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="5" -->Assign the node the label `$\omega^{\alpha_1} + \omega^{\alpha_2} + \dots + \omega^{\alpha_k}$`
+- &shy;<!-- .element: class="fragment" data-fragment-index="6" -->Cutting off any head strictly decreases the label of the root
+- &shy;<!-- .element: class="fragment" data-fragment-index="7" -->Hercules wins!
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## Closing Thoughts
+- &shy;<!-- .element: class="fragment" data-fragment-index="1" -->Even stronger hydras exist
+	- &shy;<!-- .element: class="fragment" data-fragment-index="2" -->For example, the Buchholz hydra
+- &shy;<!-- .element: class="fragment" data-fragment-index="3" -->They can (and must) be slain
+- &shy;<!-- .element: class="fragment" data-fragment-index="4" -->The numbers get a lot bigger
+- &shy;<!-- .element: class="fragment" data-fragment-index="5" -->The proof techniques must be more powerful
+</div></script></section></div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/zoom/zoom.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/math/math.js"></script>
+	<script src="plugin/mermaid/mermaid.js"></script>
+	<script src="plugin/chart/chart.min.js"></script>
+	<script src="plugin/chart/plugin.js"></script>
+	<script src="plugin/menu/menu.js"></script>
+	<script src="plugin/customcontrols/plugin.js"></script>
+	<script src="plugin/chalkboard/plugin.js"></script>
+	<script src="plugin/reveal-pointer/pointer.js"></script>
+
+    <script>
+      function extend() {
+        var target = {};
+        for (var i = 0; i < arguments.length; i++) {
+          var source = arguments[i];
+          for (var key in source) {
+            if (source.hasOwnProperty(key)) {
+              target[key] = source[key];
+            }
+          }
+        }
+        return target;
+      }
+
+	  function isLight(color) {
+		let hex = color.replace('#', '');
+
+		// convert #fff => #ffffff
+		if(hex.length == 3){
+			hex = `${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`;
+		}
+
+		const c_r = parseInt(hex.substr(0, 2), 16);
+		const c_g = parseInt(hex.substr(2, 2), 16);
+		const c_b = parseInt(hex.substr(4, 2), 16);
+		const brightness = ((c_r * 299) + (c_g * 587) + (c_b * 114)) / 1000;
+		return brightness > 155;
+	}
+
+	var bgColor = getComputedStyle(document.documentElement).getPropertyValue('--r-background-color').trim();
+	var isLight = isLight(bgColor);
+
+	if(isLight){
+		document.body.classList.add('has-light-background');
+	} else {
+		document.body.classList.add('has-dark-background');
+	}
+
+      // default options to init reveal.js
+      var defaultOptions = {
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        plugins: [
+          RevealMarkdown,
+          RevealHighlight,
+          RevealZoom,
+          RevealNotes,
+          RevealMath.MathJax3,
+		  RevealMermaid,
+		  RevealChart,
+		  RevealCustomControls,
+		  RevealMenu,
+	      RevealPointer,
+		  RevealChalkboard, 
+        ],
+
+
+    	allottedTime: 120 * 1000,
+
+		mathjax3: {
+			mathjax: 'plugin/math/mathjax/tex-mml-chtml.js',
+		},
+		markdown: {
+		  gfm: true,
+		  mangle: true,
+		  pedantic: false,
+		  smartLists: false,
+		  smartypants: false,
+		},
+
+		mermaid: {
+			theme: isLight ? 'default' : 'dark',
+		},
+
+		customcontrols: {
+			controls: [
+				{id: 'toggle-overview',
+				title: 'Toggle overview (O)',
+				icon: '<i class="fa fa-th"></i>',
+				action: 'Reveal.toggleOverview();'
+				},
+				{ icon: '<i class="fa fa-pen-square"></i>',
+				title: 'Toggle chalkboard (B)',
+				action: 'RevealChalkboard.toggleChalkboard();'
+				},
+				{ icon: '<i class="fa fa-pen"></i>',
+				title: 'Toggle notes canvas (C)',
+				action: 'RevealChalkboard.toggleNotesCanvas();'
+				},
+			]
+		},
+		menu: {
+			loadIcons: false
+		}
+      };
+
+      // options from URL query string
+      var queryOptions = Reveal().getQueryHash() || {};
+
+      var options = extend(defaultOptions, {"width":960,"height":700,"margin":0.04,"controls":true,"progress":true,"slideNumber":true,"transition":"slide","transitionSpeed":"normal"}, queryOptions);
+    </script>
+
+    <script>
+      Reveal.initialize(options);
+    </script>
+  </body>
+
+  <!-- created with Advanced Slides -->
+</html>
